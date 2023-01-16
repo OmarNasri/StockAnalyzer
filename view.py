@@ -1,19 +1,19 @@
 import tkinter as tk
+import json 
+
 
 class View(tk.Tk):
-    PAD = 10 # Padding
-
-    def __init__(self, controller): 
+    def __init__(self, controller):
         super().__init__()
         self.controller = controller
         self.title("Stock Analyzer")
-        self.geometry("500x500")
-        self.create_search_bar()
-
+        self.search_var = tk.StringVar()
+        self.search_bar = tk.Entry(self, textvariable=self.search_var)
+        self.search_bar.pack()
+        self.search_bar.bind("<Key>", self.controller.on_typing)
+        self.suggestions_list = tk.Listbox(self)
+        self.suggestions_list.pack()
+        self.suggestions_list.bind("<<ListboxSelect>>", self.controller.on_select)
+        
     def main(self):
         self.mainloop()
-
-    def create_search_bar(self):
-        stock = tk.Entry(self)
-        stock.pack(padx = self.PAD, pady = self.PAD)
-        stock.place(x = 150, y = 200, width = 200, height = 20)
