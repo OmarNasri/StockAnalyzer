@@ -20,11 +20,12 @@ class Controller:
     def on_select(self, event):
         widget = event.widget
         selection = widget.get(widget.curselection())
-        self.view.search_var.set(selection)
-        
+        #self.view.search_var.set(selection)
+        self.view.search_bar.delete(0, tk.END)
         self.view.suggestions_list.delete(0, tk.END)
+        self.view.chosen_stock.config(text=selection)
+        
 
-        print(f"You selected: {selection}")
         
 if __name__ == "__main__": 
     analyzer = Controller()
