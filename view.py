@@ -1,5 +1,5 @@
 import tkinter as tk
-import json 
+ 
 
 
 class View(tk.Tk):
@@ -7,7 +7,7 @@ class View(tk.Tk):
         super().__init__()
         self.controller = controller
         self.title("Stock Analyzer")
-        self.geometry("300x500")
+        self.geometry("350x500")
 
         self.search_label = tk.Label(self, text="Search for a stock:")
         self.search_label.grid(row=0, column=0, padx=10, pady=0,sticky="W")
@@ -27,6 +27,19 @@ class View(tk.Tk):
         self.chosen_stock = tk.Label(self, text="")
         self.chosen_stock.grid(row=3, column=1, padx=10, pady=10,sticky="E")
 
+    
+        self.current_price_label = tk.Label(self, text="Current price:")
+        self.current_price_label.grid(row=4, column=0, padx=10, pady=10,sticky="W")
+        self.current_price = tk.Label(self, text=self.controller.get_current_price())
+        self.current_price.grid(row=4, column=1, padx=10, pady=10,sticky="E")
 
+
+        self.predict_price_button = tk.Button(self, text="Predict price for tomorrow", command=self.controller.on_click)
+        self.predict_price_button.grid(row=5, column=0, padx=10, pady=10,sticky="W")
+
+        self.predicted_price = tk.Label(self, text="")
+        self.predicted_price.grid(row=6, column=0, padx=10, pady=10,sticky="E")
+        
+        
     def main(self):
         self.mainloop()
