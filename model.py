@@ -11,6 +11,8 @@ import matplotlib.pyplot as plt
 from sklearn.preprocessing import MinMaxScaler
 import yfinance as yfin
 from tensorflow.keras.layers import Dense, Dropout, LSTM
+
+
 yfin.pdr_override()
 
 class Model: 
@@ -89,24 +91,23 @@ class Model:
         predicted_prices = model.predict(x_test)
         predicted_prices = scaler.inverse_transform(predicted_prices)
 
-        #Plot the test predictions
-        plt.plot(actual_prices, color="black", label=f"Actual {company} Price")
-        plt.plot(predicted_prices, color="green", label=f"Predicted {company} Price")
-        plt.title(f"{company} Share Price")
-        plt.xlabel('Time')
-        plt.ylabel(f"{company} Share Price")
-        plt.legend()
-        plt.show(block=False)
-        
-        
-        
+
         #Predict next day  
         real_data = [model_inputs[len(model_inputs)+1-prediction_days:len(model_inputs+1), 0]]
         real_data = np.array(real_data)
         real_data=np.reshape(real_data, (real_data.shape[0], real_data.shape[1],1))
 
+        
         prediction=model.predict(real_data)
         prediction = scaler.inverse_transform(prediction)
+
         print(f"Prediction: {prediction}")
-        return prediction
+        
+        returndata = []
+        returndata.append(prediction)
+        returndata.append(actual_prices)
+        returndata.append(predicted_prices)
+        
+        return returndata
+    
     

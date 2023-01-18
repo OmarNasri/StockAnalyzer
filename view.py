@@ -1,5 +1,7 @@
 import tkinter as tk
- 
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+import matplotlib.pyplot as plt
+import yfinance as yfin
 
 
 class View(tk.Tk):
@@ -7,7 +9,7 @@ class View(tk.Tk):
         super().__init__()
         self.controller = controller
         self.title("Stock Analyzer")
-        self.geometry("350x500")
+        self.geometry("800x800")
 
         self.search_label = tk.Label(self, text="Search for a stock:")
         self.search_label.grid(row=0, column=0, padx=10, pady=0,sticky="W")
@@ -39,7 +41,16 @@ class View(tk.Tk):
 
         self.predicted_price = tk.Label(self, text="")
         self.predicted_price.grid(row=6, column=0, padx=10, pady=10,sticky="E")
+
         
-        
+        self.fig = plt.figure()
+        self.ax = self.fig.add_subplot(111)
+
+         
+        self.canvas = FigureCanvasTkAgg(self.fig, self)
+        self.canvas.get_tk_widget().grid(row=7, column=0, padx=10, pady=10,sticky="W")
+
     def main(self):
         self.mainloop()
+
+    
