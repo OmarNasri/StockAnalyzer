@@ -12,6 +12,7 @@ class Controller:
 
     def get_current_price(self):
         price = self.model.show_current_price("AAPL")
+        price = str(price)
         return price
         
     def get_predicted_price(self):
@@ -44,7 +45,7 @@ class Controller:
         selection = widget.get(widget.curselection())
         self.view.search_bar.delete(0, tk.END)
         self.view.suggestions_list.delete(0, tk.END)
-        self.view.chosen_stock.config(text=selection)
+        self.view.chosen_stock.config(text="Chosen stock: " +selection)
     
     
     def on_click(self):
