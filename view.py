@@ -1,15 +1,14 @@
 import tkinter as tk
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import matplotlib.pyplot as plt
-import yfinance as yfin
-
+import sys
 
 class View(tk.Tk):
     def __init__(self, controller):
         super().__init__()
         self.controller = controller
         self.title("Stock Analyzer")
-        self.geometry("700x1000")
+        self.geometry("680x1030")
         self.resizable(False, False)
         self.grid_columnconfigure(4, minsize=10)
         
@@ -30,7 +29,7 @@ class View(tk.Tk):
         self.chosen_stock.grid(row=5, column=0, padx=10, pady=10,sticky="nsew")
 
 
-        self.current_price = tk.Label(self, text="Current price: "+ self.controller.get_current_price())
+        self.current_price = tk.Label(self, text="Current price: ")
         self.current_price.grid(row=6, column=0, padx=10, pady=10, sticky="nsew")
         
         self.predict_price_button = tk.Button(self, text="Predict price for tomorrow", command=self.controller.on_click)
@@ -43,11 +42,13 @@ class View(tk.Tk):
         self.fig = plt.figure()
         self.ax = self.fig.add_subplot(111)
 
-         
         self.canvas = FigureCanvasTkAgg(self.fig, self)
         self.canvas.get_tk_widget().grid(row=9, column=0, padx=10, pady=10,sticky="W")
 
+        #create exit button and kill the program completely
+        self.exit_button = tk.Button(self, text="Exit", command=lambda:sys.exit())
+        self.exit_button.grid(row=10, column=0, padx=10, pady=10,sticky="nsew")
+        
+
     def main(self):
         self.mainloop()
-
-    

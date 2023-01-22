@@ -20,6 +20,8 @@ class Model:
         #url = "https://fcsapi.com/api-v3/stock/list?country=Finland&access_key=" + config.stockDataApiKey
         #response = requests.get(url)
         #self.data = response.json()
+        self.actualPrices = 0
+        self.predictedPrices = 0
         with open ("C:\\Users\\omarn\\stocks.txt", "r") as f:
             response = json.load(f)
         self.data = response
@@ -34,11 +36,26 @@ class Model:
             if user_input.casefold() in item.casefold():
                 suggestions.append(item)
         return suggestions
+    
+    def getActualPrices(self):
+        return self.actualPrices
+    
+    def getPredictedPrices(self):
+        return self.predictedPrices
 
     def show_current_price(self,company):
-        ticker = yfin.Ticker(company).info
-        market_price = ticker['regularMarketPrice']
+        info = yfin.Ticker(company).info
+        market_price = info['regularMarketPrice']
+        market_price = str(market_price)
         return market_price
+        
+
+    def get_ticker(self,company):
+        ticker = ""
+        for item in self.data.get("response"):
+            if item.get("name") == company:
+                ticker = item.get("short_name")
+        return ticker
 
     def analyze(self,company):
         start = "2015-01-01"
@@ -77,6 +94,7 @@ class Model:
         test_end = date.today().strftime("%Y-%m-%d")
         test_data = pdr.get_data_yahoo(company,start= test_start, end= test_end)
         actual_prices = test_data['Close'].values
+        self.actualPrices = actual_prices
         total_dataset = pd.concat((data['Close'], test_data['Close']), axis=0)
         model_inputs = total_dataset[len(total_dataset) - len(test_data) - prediction_days:].values
         model_inputs = model_inputs.reshape(-1,1)
@@ -90,6 +108,7 @@ class Model:
         x_test = np.reshape(x_test, (x_test.shape[0], x_test.shape[1], 1))
         predicted_prices = model.predict(x_test)
         predicted_prices = scaler.inverse_transform(predicted_prices)
+        self.predictedPrices = predicted_prices
 
 
         #Predict next day  
@@ -100,14 +119,7 @@ class Model:
         
         prediction=model.predict(real_data)
         prediction = scaler.inverse_transform(prediction)
-
         print(f"Prediction: {prediction}")
         
-        returndata = []
-        returndata.append(prediction)
-        returndata.append(actual_prices)
-        returndata.append(predicted_prices)
-        
-        return returndata
-    
+        return prediction
     
