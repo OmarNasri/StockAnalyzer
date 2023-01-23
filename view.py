@@ -1,7 +1,9 @@
+
 import tkinter as tk
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import matplotlib.pyplot as plt
 import sys
+
 
 class View(tk.Tk):
     def __init__(self, controller):
@@ -49,6 +51,5 @@ class View(tk.Tk):
         self.exit_button = tk.Button(self, text="Exit", command=lambda:sys.exit())
         self.exit_button.grid(row=10, column=0, padx=10, pady=10,sticky="nsew")
         
-
     def main(self):
         self.mainloop()

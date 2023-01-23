@@ -9,6 +9,7 @@ from keras.models import Sequential
 from keras.layers import Dense, LSTM
 import matplotlib.pyplot as plt
 from sklearn.preprocessing import MinMaxScaler
+from sklearn.metrics import mean_squared_error, mean_absolute_error
 import yfinance as yfin
 from tensorflow.keras.layers import Dense, Dropout, LSTM
 
@@ -66,7 +67,7 @@ class Model:
         #Prepare data
         scaler = MinMaxScaler(feature_range=(0, 1))
         scaled_data = scaler.fit_transform(data['Close'].values.reshape(-1,1))
-        prediction_days = 30
+        prediction_days = 40
         x_train = []
         y_train = []
         for x in range(prediction_days, len(scaled_data)):
@@ -86,11 +87,17 @@ class Model:
         model.add(Dense(units=1)) 
         model.compile(optimizer='adam', loss='mean_squared_error')
         model.fit(x_train, y_train, epochs=25, batch_size=32)
-      
+        
+        y_train_pred = model.predict(x_train)
+
+        # Calculate the MSE and MAE for the training set
+        training_mse = mean_squared_error(y_train, y_train_pred)
+        training_mae = mean_absolute_error(y_train, y_train_pred)
+        print("Training set MSE:", training_mse)
+        print("Training set MAE:", training_mae)
 
         #Test the model accuracy on existing data
-    
-        test_start = "2020-01-01"
+        test_start = "2022-01-01"
         test_end = date.today().strftime("%Y-%m-%d")
         test_data = pdr.get_data_yahoo(company,start= test_start, end= test_end)
         actual_prices = test_data['Close'].values
@@ -99,6 +106,8 @@ class Model:
         model_inputs = total_dataset[len(total_dataset) - len(test_data) - prediction_days:].values
         model_inputs = model_inputs.reshape(-1,1)
         model_inputs = scaler.transform(model_inputs)
+
+        
 
         #Make predictions on test data
         x_test = []
@@ -110,16 +119,21 @@ class Model:
         predicted_prices = scaler.inverse_transform(predicted_prices)
         self.predictedPrices = predicted_prices
 
+        # MSE on test set
+        mse = mean_squared_error(y_true=self.actualPrices, y_pred=self.predictedPrices)
+        print("Test set MSE:", mse)
+
+        # MAE on test set
+        mae = mean_absolute_error(y_true=self.actualPrices, y_pred=self.predictedPrices)
+        print("Test set MAE:", mae)
 
         #Predict next day  
         real_data = [model_inputs[len(model_inputs)+1-prediction_days:len(model_inputs+1), 0]]
         real_data = np.array(real_data)
         real_data=np.reshape(real_data, (real_data.shape[0], real_data.shape[1],1))
-
-        
         prediction=model.predict(real_data)
         prediction = scaler.inverse_transform(prediction)
         print(f"Prediction: {prediction}")
-        
+
         return prediction
     
