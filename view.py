@@ -1,4 +1,3 @@
-
 import tkinter as tk
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import matplotlib.pyplot as plt
@@ -11,7 +10,7 @@ class View(tk.Tk):
         self.controller = controller
         self.title("Stock Analyzer")
         self.geometry("680x1030")
-        self.resizable(False, False)
+        self.resizable(False, True)
         self.grid_columnconfigure(4, minsize=10)
         
         self.search_label = tk.Label(self, text="Search for a stock:")
@@ -47,7 +46,7 @@ class View(tk.Tk):
         self.canvas = FigureCanvasTkAgg(self.fig, self)
         self.canvas.get_tk_widget().grid(row=9, column=0, padx=10, pady=10,sticky="W")
 
-        #create exit button and kill the program completely
+       
         self.exit_button = tk.Button(self, text="Exit", command=lambda:sys.exit())
         self.exit_button.grid(row=10, column=0, padx=10, pady=10,sticky="nsew")
         

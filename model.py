@@ -1,6 +1,5 @@
 import requests
 from datetime import date
-import config
 import json 
 from pandas_datareader import data as pdr
 import pandas as pd
@@ -11,6 +10,7 @@ import matplotlib.pyplot as plt
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.metrics import mean_squared_error, mean_absolute_error
 import yfinance as yfin
+import config
 from tensorflow.keras.layers import Dense, Dropout, LSTM
 
 
@@ -18,9 +18,10 @@ yfin.pdr_override()
 
 class Model: 
     def __init__(self):
-        #url = "https://fcsapi.com/api-v3/stock/list?country=Finland&access_key=" + config.stockDataApiKey
+        #url = "https://fcsapi.com/api-v3/stock/list?country=United-states&access_key=" + config.stockDataApiKey
         #response = requests.get(url)
         #self.data = response.json()
+        
         self.actualPrices = 0
         self.predictedPrices = 0
         with open ("C:\\Users\\omarn\\stocks.txt", "r") as f:
@@ -45,17 +46,18 @@ class Model:
         return self.predictedPrices
 
     def show_current_price(self,company):
-        info = yfin.Ticker(company).info
-        market_price = info['regularMarketPrice']
-        market_price = str(market_price)
-        return market_price
-        
+        #info = yfin.Ticker(company).info
+        url = "https://fcsapi.com/api-v3/stock/latest?symbol=" +company+ "&access_key=" +config.stockDataApiKey
+        info = requests.get(url).json()
+        current = str(info['response'][0]['c'])
+        return current
 
     def get_ticker(self,company):
         ticker = ""
         for item in self.data.get("response"):
             if item.get("name") == company:
                 ticker = item.get("short_name")
+        print(ticker)
         return ticker
 
     def analyze(self,company):
@@ -107,8 +109,6 @@ class Model:
         model_inputs = model_inputs.reshape(-1,1)
         model_inputs = scaler.transform(model_inputs)
 
-        
-
         #Make predictions on test data
         x_test = []
         for x in range(prediction_days, len(model_inputs)):
@@ -136,4 +136,3 @@ class Model:
         print(f"Prediction: {prediction}")
 
         return prediction
-    

@@ -1,7 +1,7 @@
 from model import Model
 from view import View
 import tkinter as tk
-import numpy as np
+
 
 
 class Controller: 
@@ -13,10 +13,6 @@ class Controller:
     
     def main(self):
         self.view.main()
-
-    def get_current_price(self,ticker):
-        price = self.model.show_current_price(ticker)
-        return price
         
     def get_predicted_price(self,ticker):
         prediction = self.model.analyze(ticker)
@@ -53,7 +49,7 @@ class Controller:
             self.view.predicted_price.config(text="")
             self.view.chosen_stock.config(text="Chosen stock: " +self.company)
             self.ticker = self.model.get_ticker(self.company)
-            self.view.current_price.config(text="Current price: " + self.get_current_price(self.ticker))
+            self.view.current_price.config(text="Current price: " +self.model.show_current_price(self.ticker))
         except:
             self.view.current_price.config(text="")
             self.view.chosen_stock.config(text="ERROR: Stock data not found. Try another stock.")
